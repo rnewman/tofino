@@ -32,6 +32,29 @@ We hang out on Slack here: https://project-tofino.slack.com (you can get an invi
 
 ### Dependencies
 
+#### Windows
+
+1. install [node](https://nodejs.org/en/) 
+
+## Build prerequisites
+
+### All platforms
+1. `nodejs` **`>= 5.0`**
+
+    Install from your package manager or download from https://nodejs.org
+
+2. `node-gyp` **`3.2.1`**
+
+        sudo npm install -g node-gyp@3.2.1
+
+### Windows
+Ensure you have the following installed:  
+
+* [Node.js 5+](https://nodejs.org/en/)
+* [Python 2.7](https://www.python.org/downloads/)  
+* [Visual Studio 2013 or 2015](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx)  
+
+### OS X
 ```
 brew install node --with-full-icu
 ```
