@@ -52,6 +52,9 @@ const app = electron.app; // control application life.
 const ipc = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
 
+import { feed } from '../agents/facebook/';
+
+
 /**
  * Top-level list of Browser Windows.
  */
@@ -80,6 +83,7 @@ async function makeBrowserWindow(): Promise<electron.BrowserWindow> {
       const browserDidFinishLoadTime = Date.now();
       instrument.event('browser', 'READY', 'ms', browserDidFinishLoadTime - browserStartTime);
 
+      feed().then(r => { console.log('Done!'); }).catch(e => { console.log(`Err: ${JSON.stringify(e)}`); });
       resolve();
     });
   });
