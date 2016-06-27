@@ -31,7 +31,7 @@ describe('Places importer', function() {
 
         const dbAfter = djs.db(conn);
 
-        expect(mori.count(dbAfter)).toBe(2409);
+        expect(mori.count(dbAfter)).toBe(2407);
 
         let query = mori.parse(`
           [:find [?t ...]
@@ -39,13 +39,17 @@ describe('Places importer', function() {
            :where
            [?pe "page/url" ?url]
            [?pe "event/visit" ?ve]
-           [?ve "event/instant" ?t]
+           [?ve "visit/instant" ?t]
           ]`);
 
         let results = mori.sort(d.q(query, dbAfter, 'https://reddit.com/'));
         expect(mori.count(results)).toBe(1196);
         expect(mori.first(results)).toBe(1440176482923983);
         expect(mori.last(results)).toBe(1464305350798879);
+
+        // This makes no sense.
+        expect(mori.count(await datomStorage.visitedMatches('https://reddit.com/', 0, 600))).toBe(1);
+        expect(mori.count(await datomStorage.visitedMatches('https://reddit.com/', 0, 100))).toBe(4);
 
         query = mori.parse(`
           [:find [(pull ?pe ["page/guid"]) ...]
@@ -57,6 +61,8 @@ describe('Places importer', function() {
         results = d.q(query, dbAfter, 'http://www.apple.com/ca/');
         expect(mori.count(results)).toBe(1);
         expect(mori.get(mori.first(results), 'page/guid')).toBe('8gKc0hLRWhom');
+
+        expect(mori.count(await datomStorage.visitedMatches('http://www.apple.com/ca/'))).toBe(1);
 
         done();
       } catch (e) {

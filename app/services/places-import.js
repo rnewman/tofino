@@ -64,16 +64,14 @@ export class PlacesImporter {
 
       if (place.title) {
         assertions = conj(assertions,
-                   vector(DB_ADD, -1, 'event/title', -2),
-                   vector(DB_ADD, -2, 'event/instant', place.last_visit_date),
-                   vector(DB_ADD, -2, 'title/text', place.title));
+                   vector(DB_ADD, -1, 'page/title', place.title));
       }
 
       place.visits.forEach((visit, i) => {
         const vid = -3 - i;
         assertions = conj(assertions,
                    vector(DB_ADD, -1, 'event/visit', vid),
-                   vector(DB_ADD, vid, 'event/instant', visit));
+                   vector(DB_ADD, vid, 'visit/instant', visit));
       });
 
       d.transact_BANG_(conn, assertions);
@@ -81,11 +79,12 @@ export class PlacesImporter {
   }
 
   static async importFromPlaces(pathToPlaces, datomStorage, limit = undefined) {
-    const placesDB = await sqlite.DB.open(pathToPlaces, sqlite.OPEN_READONLY);
+    // The WAL is enabled, so opening read-only leaves orphaned .shm/.wal files.
+    const placesDB = await sqlite.DB.open(pathToPlaces);
     try {
       const importer = new PlacesImporter(placesDB);
       await importer.buildPlaceMap(limit);
-      return importer.writePlacesTo(datomStorage.conn);
+      importer.writePlacesTo(datomStorage.conn);
     } finally {
       await placesDB.close();
     }

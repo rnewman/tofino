@@ -319,6 +319,7 @@ export class ProfileDatomStorage {
 
     const visitDatoms = this.getVisits(since);
     const all = await this.getVisitedPagesLazily(visitDatoms, 3 * limit);
+    console.log(`count ${limit} ${mori.count(visitDatoms)}`);
 
     return mori.take(limit, mori.filter(matchesSubstring, all));
   }
