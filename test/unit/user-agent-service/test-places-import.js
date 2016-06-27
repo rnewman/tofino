@@ -47,9 +47,9 @@ describe('Places importer', function() {
         expect(mori.first(results)).toBe(1440176482923983);
         expect(mori.last(results)).toBe(1464305350798879);
 
-        // This makes no sense.
-        expect(mori.count(await datomStorage.visitedMatches('https://reddit.com/', 0, 600))).toBe(1);
-        expect(mori.count(await datomStorage.visitedMatches('https://reddit.com/', 0, 100))).toBe(4);
+        expect(mori.count(await datomStorage.visitedMatches('https://reddit.com/', 0, 10))).toBe(1);
+        expect(mori.count(await datomStorage.visitedMatches('https://reddit.com/', 0, 20))).toBe(1);
+        expect(mori.count(await datomStorage.visitedMatches('https://reddit.com/', 0, 30))).toBe(1);
 
         query = mori.parse(`
           [:find [(pull ?pe ["page/guid"]) ...]
