@@ -381,6 +381,32 @@ export class ProfileDatomStorage {
   }
 
   async savePage(page, session, now = microtime.now()) {
-    // TODO
+    const { uri, title, excerpt /* , textContent */ } = page;
+
+    // TODO: session.
+    // TODO: save textContent.
+    // TODO: FTS.
+
+    let assertions = vector(
+      vector(DB_ADD, -1, 'page/url', uri),
+      vector(DB_ADD, -1, 'event/save', -2),
+      vector(DB_ADD, -2, 'save/instant', now),
+    );
+
+    if (title) {
+      assertions = mori.conj(assertions,
+        vector(DB_ADD, -1, 'page/title', title),
+        vector(DB_ADD, -2, 'save/title', title)
+      );
+    }
+
+    if (excerpt) {
+      assertions = mori.conj(assertions,
+        vector(DB_ADD, -2, 'save/excerpt', excerpt)
+      );
+    }
+
+    const result = this.transact(assertions);
+    return getIn(result, [TEMPIDS, -1]);
   }
 }
